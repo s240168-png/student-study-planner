@@ -1,0 +1,36 @@
+name: Student Study Planner CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check required project files exist
+        run: |
+          for f in index.html style.css script.js README.md; do
+            test -f "$f" || { echo "Missing file: $f"; exit 1; }
+          done
+
+      - name: Check JavaScript syntax
+        run: node --check script.js
+
+      - name: Check for unsafe DOM and code patterns
+        run: |
+          if grep -nE 'innerHTML|outerHTML|insertAdjacentHTML|document\.write|eval\(' script.js; then
+            echo "Unsafe pattern found in script.js"
+            exit 1
+          fi
+
+      - name: Check localStorage persistence is implemented
+        run: |
+          grep -q "localStorage" script.js
+          grep -q "JSON.stringify" script.js
+          grep -q "JSON.parse" script.js
