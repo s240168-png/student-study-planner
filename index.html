@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Study Planner and Exam Preparation Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <strong>Study Planner</strong>
+  <button id="menuBtn" type="button" aria-controls="nav" aria-expanded="false">Menu</button>
+</header>
+
+<nav id="nav" aria-label="Main navigation">
+  <div class="brand">Study Planner<small>Exam Preparation Tracker</small></div>
+  <button type="button" data-view="dashboard" class="active">Dashboard</button>
+  <button type="button" data-view="subjects">Subjects &amp; Topics</button>
+  <button type="button" data-view="planner">Study Planner</button>
+  <button type="button" data-view="exams">Exam Tracker</button>
+  <button type="button" data-view="analytics">Progress &amp; Analytics</button>
+  <div class="navtools">
+    <button type="button" id="loadSample">Load Sample Data</button>
+    <button type="button" id="resetData" class="danger">Reset Demo Data</button>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1">
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <section id="view-dashboard" class="view">
+    <h2>Dashboard</h2>
+    <div id="emptyBanner" class="banner" hidden>No data yet. Add a subject in <b>Subjects &amp; Topics</b> or click <b>Load Sample Data</b> in the menu.</div>
+    <div id="cards" class="cards"></div>
+    <div class="grid2">
+      <article class="panel"><h3>Today's Study Plan</h3><div id="dashToday"></div></article>
+      <article class="panel"><h3>Upcoming Examinations</h3><div id="dashExams"></div></article>
+      <article class="panel"><h3>Recent Study Sessions</h3><div id="dashRecent"></div></article>
+      <article class="panel"><h3>Subject-wise Preparation</h3><div id="dashSubjects"></div></article>
+    </div>
+  </section>
+
+  <section id="view-subjects" class="view" hidden>
+    <h2>Subjects &amp; Topics</h2>
+    <div class="grid2">
+      <article class="panel">
+        <h3 id="subjFormTitle">Add Subject</h3>
+        <form id="subjectForm" novalidate>
+          <input type="hidden" id="subId">
+          <label>Subject name<input id="subName" maxlength="80" required></label>
+          <label>Description (optional)<textarea id="subDesc" rows="2" maxlength="300"></textarea></label>
+          <div id="subErr" class="formmsg" role="alert"></div>
+          <button class="primary" id="subSubmit">Add Subject</button>
+          <button type="button" id="subCancel" hidden>Cancel edit</button>
+        </form>
+      </article>
+      <article class="panel">
+        <h3 id="topFormTitle">Add Topic</h3>
+        <form id="topicForm" novalidate>
+          <input type="hidden" id="topId">
+          <label>Subject<select id="topSubject" required></select></label>
+          <label>Topic name<input id="topName" maxlength="100" required></label>
+          <div id="topErr" class="formmsg" role="alert"></div>
+          <button class="primary" id="topSubmit">Add Topic</button>
+          <button type="button" id="topCancel" hidden>Cancel edit</button>
+        </form>
+      </article>
+    </div>
+    <h3>Subjects</h3><div id="subjectList"></div>
+    <h3>Topics by Subject</h3><div id="topicList"></div>
+  </section>
+
+  <section id="view-planner" class="view" hidden>
+    <h2>Study Planner</h2>
+    <article class="panel">
+      <h3 id="sFormTitle">Add Study Session</h3>
+      <form id="sessionForm" novalidate>
+        <input type="hidden" id="sId">
+        <div class="fgrid">
+          <label>Session title<input id="sTitle" maxlength="100" required></label>
+          <label>Subject<select id="sSubject" required></select></label>
+          <label>Topic<select id="sTopic"></select></label>
+          <label>Study date<input type="date" id="sDate" required></label>
+          <label>Planned duration<input type="number" id="sDur" min="1" step="any" required></label>
+          <label>Duration unit<select id="sUnit"><option value="1">Minutes</option><option value="60">Hours</option></select></label>
+          <label>Priority<select id="sPri"><option>Low</option><option selected>Medium</option><option>High</option></select></label>
+          <label>Status<select id="sStatus"><option>Pending</option><option>Completed</option></select></label>
+          <label class="wide">Notes (optional)<textarea id="sNotes" rows="2" maxlength="500"></textarea></label>
+        </div>
+        <div id="sErr" class="formmsg" role="alert"></div>
+        <button class="primary" id="sSubmit">Add Session</button>
+        <button type="button" id="sCancel" hidden>Cancel edit</button>
+      </form>
+    </article>
+    <div class="filters">
+      <label>Subject<select id="fSubject"></select></label>
+      <label>Status<select id="fStatus"><option value="">All</option><option>Pending</option><option>Completed</option></select></label>
+      <label>Priority<select id="fPri"><option value="">All</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+      <label>Sort by date<select id="fSort"><option value="asc">Earliest first</option><option value="desc">Latest first</option></select></label>
+    </div>
+    <div id="sessionList"></div>
+  </section>
+
+  <section id="view-exams" class="view" hidden>
+    <h2>Exam Tracker</h2>
+    <article class="panel">
+      <h3 id="eFormTitle">Add Examination</h3>
+      <form id="examForm" novalidate>
+        <input type="hidden" id="eId">
+        <div class="fgrid">
+          <label>Examination name<input id="eName" maxlength="100" required></label>
+          <label>Subject<select id="eSubject" required></select></label>
+          <label>Exam date<input type="date" id="eDate" required></label>
+        </div>
+        <div id="eErr" class="formmsg" role="alert"></div>
+        <button class="primary" id="eSubmit">Add Exam</button>
+        <button type="button" id="eCancel" hidden>Cancel edit</button>
+      </form>
+    </article>
+    <div id="examList"></div>
+  </section>
+
+  <section id="view-analytics" class="view" hidden>
+    <h2>Progress &amp; Analytics</h2>
+    <div class="grid2">
+      <article class="panel"><h3>Overall Completion</h3><div id="anOverall"></div></article>
+      <article class="panel"><h3>Completed vs Pending Sessions</h3><div id="anSplit"></div></article>
+      <article class="panel"><h3>Subject-wise Topic Completion</h3><div id="anTopics"></div></article>
+      <article class="panel"><h3>Planned vs Completed Study Time</h3><div id="anTime"></div></article>
+    </div>
+  </section>
+</main>
+
+<dialog id="confirmDlg" aria-labelledby="confirmMsg">
+  <form method="dialog">
+    <p id="confirmMsg"></p>
+    <div class="dlgbtns"><button value="cancel">Cancel</button><button value="ok" class="danger" id="confirmOk">Confirm</button></div>
+  </form>
+</dialog>
+<script src="script.js"></script>
+</body>
+</html>
